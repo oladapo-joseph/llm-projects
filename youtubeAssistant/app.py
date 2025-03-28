@@ -1,21 +1,11 @@
 import streamlit as st
-from youtubeTranscript_OpenAI import getSummary, getResponse,embeddings, template
+from youtubeTranscript_OpenAI import getSummary, getResponse,create_Youtube_vectors
 import gc 
 import uuid
-from youtube_transcript_api import YouTubeTranscriptApi
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from langchain_core.prompts import PromptTemplate 
-from langchain_community.vectorstores import  FAISS 
-from youtube_transcript_api import YouTubeTranscriptApi 
-from dotenv import load_dotenv 
-
-
-load_dotenv('../.env')
 
 st.title('Youtube Assistant')
-
-
+st.write("This app uses OpenAI's GPT-3 to answer questions about a Youtube video.")
 
 if "id" not in st.session_state:
     st.session_state.id = uuid.uuid4()
@@ -23,40 +13,13 @@ if "id" not in st.session_state:
 
 session_id = st.session_state.id
 client = None
-
-
-
 query = ''
 vectorDb =''
-
-def create_Youtube_vectors(url:str)->FAISS: 
-    
-    def getId(url)->str:
-        from urllib.parse import urlparse, parse_qs
-        if url.startswith('http'):
-            query = urlparse(url).query
-            params = parse_qs(query)
-            return params.get('v', [url.split('/')[-1]])[0]
-        return url
-    
-    transcript= YouTubeTranscriptApi.get_transcript(getId(url))
-    
-    full_transcript = " ".join([i['text'] for i in transcript])
-
-    # next thing is to split the transcript into documents
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, 
-                                                   chunk_overlap=200)
-    docs = text_splitter.split_text(full_transcript)
-
-    db = FAISS.from_texts(docs, embeddings)
-
-    return db, docs
 
 def reset_chat():
     st.session_state.messages = []
     st.session_state.context = None
     gc.collect()
-
 
 with st.sidebar:
     url = st.sidebar.text_input('Share the Url of the Youtube video', placeholder='https://youtube.com/xxxxxxxx',)
@@ -111,9 +74,7 @@ if prompt := st.chat_input("What's up?"):
         for chunk in streaming_response.split(' '):
             full_response += chunk
             full_response += ' '
-            message_placeholder.markdown(full_response + "▌")
-
-        
+            message_placeholder.markdown(full_response + "▌")     
 
         message_placeholder.markdown(full_response)
         # st.session_state.context = ctx

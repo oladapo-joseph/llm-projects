@@ -4,4 +4,11 @@ llm/
 t.ipynb
 t.py
 details.txt
-conceptHelper/asynctest.py
+asynctest.py
+.vscode/
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db

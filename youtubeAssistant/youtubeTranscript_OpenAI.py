@@ -35,8 +35,11 @@ template = """
 def create_Youtube_vectors(url:str)->FAISS: 
     
     def getId(url)->str:
+        from urllib.parse import urlparse, parse_qs
         if url.startswith('http'):
-            return url.split('/')[-1]
+            query = urlparse(url).query
+            params = parse_qs(query)
+            return params.get('v', [url.split('/')[-1]])[0]
         return url
     
     transcript= YouTubeTranscriptApi.get_transcript(getId(url))

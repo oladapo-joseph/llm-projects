@@ -1,5 +1,4 @@
 from langchain_openai import ChatOpenAI 
-# from langchain.chains.llm import LLMChain 
 from langchain_core.prompts import PromptTemplate 
 from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv ,dotenv_values
