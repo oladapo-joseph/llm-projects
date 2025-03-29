@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI ,OpenAIEmbeddings
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate 
 from langchain_community.vectorstores import  FAISS 
-from youtube_transcript_api import YouTubeTranscriptApi 
+
 from dotenv import load_dotenv 
 
 
