@@ -10,6 +10,11 @@ st.write("This app uses OpenAI's GPT-3 to answer questions about a Youtube video
 if "id" not in st.session_state:
     st.session_state.id = uuid.uuid4()
     st.session_state.file_cache = {}
+    st.session_state.messages = []
+    st.session_state.context = None
+    st.session_state.summary = None
+    st.session_state.url = None
+
 
 session_id = st.session_state.id
 client = None
@@ -23,12 +28,13 @@ def reset_chat():
 
 with st.sidebar:
     url = st.sidebar.text_input('Share the Url of the Youtube video', placeholder='https://youtube.com/xxxxxxxx',)
-    if url:
+    if url and url != st.session_state.url: 
+        st.session_state.url = url
         try:
             with st.spinner('Fetching Transcript'):
-                vectorDb, summary = create_Youtube_vectors(url)
+                st.session_state.vectorDb, st.session_state.summary = create_Youtube_vectors(url)
                 st.markdown(f'You requested to know about this {url}')
-                st.session_state.file_cache['summary'] = getSummary(summary)
+                st.session_state.file_cache['summary'] = getSummary(st.session_state.summary)
                 st.success("Ready to Chat! View Summary Below")
                 st.markdown(st.session_state.file_cache['summary'])
                 
@@ -53,10 +59,16 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
+st.sidebar.markdown(st.session_state.file_cache['summary'])
 
 
 # Accept user input
 if prompt := st.chat_input("What's up?"):
+    
+    if st.session_state.vectorDb is None:
+        st.error("Please enter a valid Youtube URL")
+        st.stop()
+    
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container
@@ -69,11 +81,11 @@ if prompt := st.chat_input("What's up?"):
         full_response = ""
         
         # Simulate stream of response with milliseconds delay
-        streaming_response = getResponse(vectorDb, prompt)
+        streaming_response = getResponse(st.session_state.vectorDb, prompt)
         
         for chunk in streaming_response.split(' '):
-            full_response += chunk
-            full_response += ' '
+            full_response += chunk + ' '
+            # Simulate typing delay
             message_placeholder.markdown(full_response + "▌")     
 
         message_placeholder.markdown(full_response)

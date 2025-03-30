@@ -62,7 +62,7 @@ def getSummary(docs):
     else:
         newdocs =docs 
 
-    llm = ChatOpenAI(temperature=0.4)
+    llm = ChatOpenAI(temperature=0.4, streaming=True)
 
     prompt = PromptTemplate(
         input_variables=['file'],
@@ -86,7 +86,7 @@ def getResponse(db,query, k=4):
 
     page_content= ' '.join([i.page_content for i in docs])
 
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(streaming=True, temperature=0.4, model="gpt-3.5-turbo-16k")
 
     prompt = PromptTemplate(
         input_variables=['question', 'docs'],
