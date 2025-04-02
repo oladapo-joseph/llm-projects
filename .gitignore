@@ -13,3 +13,5 @@ __pycache__/
 *.pyd
 *.db
 data/Summary.pdf
+faiss_index/
+faiss_*
