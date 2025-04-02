@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
-from langchain.chains import ConversationChain, RetrievalQA
+from langchain.chains import RetrievalQA
 from scraper import Url_to_vectorDB
 load_dotenv('../.env')
 
