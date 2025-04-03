@@ -145,6 +145,10 @@ def getMetaData(db: FAISS) -> list:
         print(f"Error extracting metadata: {e}")
         return []
 
+
+
+
+
 """
 if __name__ == "__main__":
     sys.argv[0] = os.path.basename(__file__)

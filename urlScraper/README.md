@@ -15,7 +15,7 @@ The **URL Scraper** is a powerful application designed to extract, process, and 
 ## Installation
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/urlScraper.git
+    git clone https://github.com/oladapo-joseph/urlScraper.git
     ```
 2. Navigate to the project directory:
     ```bash
@@ -34,7 +34,6 @@ The **URL Scraper** is a powerful application designed to extract, process, and 
 2. Open the provided URL in your browser to access the Streamlit interface.
 3. Input the target URL or list of URLs.
 4. View, filter, and export the extracted URLs.
-
 ## Key Concepts and Technologies
 
 ### Large Language Models (LLMs)
@@ -42,6 +41,10 @@ The application uses state-of-the-art LLMs, such as OpenAI's GPT models, to anal
 
 ### Embeddings
 URLs and their metadata are converted into vector embeddings using tools like OpenAI's embedding models. This allows for advanced semantic search and contextual filtering.
+
+### Note on RetrievalQA
+The `RetrievalQA` method has been deprecated. The script has been updated to use the new, recommended approach for retrieval-based question answering.
+
 
 ### Vectorstore
 The project integrates **FAISS (Facebook AI Similarity Search)** as a vectorstore to store and manage embeddings. This ensures efficient similarity searches and makes queries reusable even after the application is stopped.
