@@ -1,6 +1,6 @@
 import streamlit as st
 from llm_worker import getResponse
-from scraper import Url_to_vectorDB, checkFAISS
+from urlScraper.web2DB import Url_to_vectorDB, checkFAISS
 from dotenv import load_dotenv
 import gc 
 import uuid
