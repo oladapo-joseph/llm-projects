@@ -48,12 +48,13 @@ def getResponse(query: str, db: FAISS, k=4) -> str:
                         template=template
                     )
     doc_chain = create_stuff_documents_chain(llm, prompt)
-    chain = create_retrieval_chain(retriever, doc_chain, )
+    chain = create_retrieval_chain(retriever,doc_chain)
     response = chain.invoke({'input':query})
     return response['answer']
 
-query = input('What will you like to know: ')
+# you can test it out on your own with just ordinary inputs
+# query = input('What will you like to know: ')
 
-x = getResponse(query, db,5)
+# x = getResponse(query, db,5)
 
-print (x)
+# print (x)
