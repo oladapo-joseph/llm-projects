@@ -15,3 +15,7 @@ __pycache__/
 data/Summary.pdf
 faiss_index/
 faiss_*
+data/
+langchain-academy/
+google.json
+csv_data_analysis/
