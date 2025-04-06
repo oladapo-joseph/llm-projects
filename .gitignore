@@ -13,8 +13,9 @@ __pycache__/
 *.pyd
 *.db
 data/Summary.pdf
-faiss_index/
-faiss_*
+faiss_index/*
+faiss_index2/*
+faiss_ngx/
 data/
 langchain-academy/
 google.json
