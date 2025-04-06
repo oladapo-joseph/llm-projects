@@ -13,10 +13,12 @@ __pycache__/
 *.pyd
 *.db
 data/Summary.pdf
-faiss_index/*
-faiss_index2/*
+faiss_index/
+faiss_index2/
 faiss_ngx/
 data/
 langchain-academy/
 google.json
-csv_data_analysis/
+csv_data_analysis/*
+csv_data_analysis/.env
+csv_data_analysis/data/

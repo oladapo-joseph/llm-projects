@@ -30,12 +30,7 @@ def create_graph() -> CompiledGraph:
     
     # Define the router function for conditional edges
     def router(state: AgentState) -> str:
-        # if state.get('error', True):
-        #     return "regenerate_python_code"
-        # if not state.get('code_valid', False):
-        #     return "validate_code"
-        # if state.get('final_answer'):
-        #     return "result"
+   
         return state.get('next_state')
     
     # Add edges

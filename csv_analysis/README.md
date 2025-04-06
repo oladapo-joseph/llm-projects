@@ -64,24 +64,25 @@ pip install -r requirements.txt
 ```
 
 ### 4. **Prepare the Environment**
-    - Create a `.env` file in the root directory and add your environment variables (e.g., API keys for `langchain`, `openai`).
+ - Create a `.env` file in the root directory and add your environment variables (e.g., API keys for `langchain`, `openai`).
 
 ### 5. **Run the Workflow**
-    - To execute the workflow, run the `graphGen.py` file, after setting up the environment:
-    ```bash
+* To execute the workflow, run the `graphGen.py` file, after setting up the environment:
+```bash
     cd studio
     langgraph dev     # this opens the langgraph UI for workflow visualization and simulation
-    ```
+```
 
 ### 6. **Visualize the Workflow (Optional)**
     - Install `graphviz` to generate a visual representation of the workflow:
-    ```bash
+    
+```bash
     pip install graphviz 
-    ```
-    - Run the visualization command:
-    ```bash
+    
+    # Run the visualization command:
     python studio/graphGen.py
-    ```
+
+```
 
 ---
 
