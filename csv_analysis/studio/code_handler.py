@@ -100,10 +100,10 @@ def validate_code(state:AgentState) -> AgentState:
 
 def execute_code(state:AgentState) -> AgentState:
     print("--- PYTHON CODE EXECUTER ---")
-    Python_script = state['python_code']
+    python_script = state['python_code']
     
     namespace = {'pd':pd}
-    exec(Python_script, namespace)
+    exec(python_script, namespace)
     try:
         state['final_answer'] = namespace['get_answer'](state['df']) 
         state['next_state'] = 'result'
