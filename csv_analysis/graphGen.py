@@ -3,7 +3,7 @@ from langgraph.graph.graph import CompiledGraph
 from agentx import AgentState
 from code_handler import generate_code, validate_code, execute_code, regenerate_code, result
 from query_handler import getQuestion, go_to_next
-from filehandler import getFileHead, df
+from filehandler import getFileHead
 from typing import Annotated, Literal, Union
 from enum import Enum
 
