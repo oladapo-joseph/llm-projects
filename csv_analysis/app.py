@@ -12,6 +12,7 @@ if "id" not in st.session_state:
     st.session_state.context = None
     st.session_state.summary = None
     st.session_state.output = None
+
 if 'agent_state' not in st.session_state:
         st.session_state.agent_state = AgentState(
             python_code="",
@@ -63,10 +64,9 @@ def get_question(prompt):
 def startWorkflow():
     if st.session_state.agent_state['df'] is not None:
         # Initialize the graph and start the workflow
-        while st.session_state.agent_state['next_state'] != "result":
-            print("Current state:", st.session_state.agent_state['next_state'])
-            graph = create_graph()
-            st.session_state.output = graph.invoke(st.session_state.agent_state)
+        print("Current state:", st.session_state.agent_state['next_state'])
+        graph = create_graph()
+        st.session_state.output = graph.invoke(st.session_state.agent_state)
 
         # Display the final answer
         if st.session_state.agent_state["exception"]:
@@ -120,4 +120,4 @@ if prompt := st.chat_input("What's do you want to know?"):
         message_placeholder.markdown(full_response)
 
     # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+        st.session_state.messages.append({"role": "assistant", "content": full_response})

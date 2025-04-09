@@ -102,7 +102,16 @@ def validate_code(state:AgentState) -> AgentState:
             print("next: ", state['next_state'])
     return state
 
-
+def returnFunction(namespace):
+    """
+        This function returns the name of the function in the 
+        namespace, so we can use it later
+    """
+    print("\nNamespace contents:")
+    for name, obj in namespace.items():
+        if callable(obj) and not name.startswith('__'):
+            return (name)
+            
 
 def execute_code(state:AgentState) -> AgentState:
     print("--- PYTHON CODE EXECUTER ---")
@@ -111,7 +120,8 @@ def execute_code(state:AgentState) -> AgentState:
     namespace = {'pd':pd}
     exec(python_script, namespace)
     try:
-        state['final_answer'] = namespace['get_answer'](state['df']) 
+        functionName = returnFunction(namespace)
+        state['final_answer'] = namespace[functionName](state['df']) 
         state['next_state'] = 'result'
         print("next: ", state['next_state'])
         state['error'] = False

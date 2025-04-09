@@ -4,7 +4,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 from dotenv import load_dotenv
 
-load_dotenv('../../.env')  # Load environment variables from .env file
+load_dotenv('../.env')  # Load environment variables from .env file
 
 def generate_report(question: str, answer: str) -> str:
     """
@@ -39,4 +39,4 @@ def generate_report(question: str, answer: str) -> str:
         "answer": answer
     })
 
-    return response['answer']
+    return response
