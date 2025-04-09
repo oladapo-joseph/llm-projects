@@ -102,7 +102,7 @@ def validate_code(state:AgentState) -> AgentState:
             print("next: ", state['next_state'])
     return state
 
-def returnFunction(namespace):
+def returnFunction(namespace)->str:
     """
         This function returns the name of the function in the 
         namespace, so we can use it later
