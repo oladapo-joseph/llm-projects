@@ -2,6 +2,7 @@ from typing import TypedDict
 import pandas as pd 
 
 class AgentState(TypedDict):
+    file: str
     python_code: str
     final_answer: str
     df: pd.DataFrame

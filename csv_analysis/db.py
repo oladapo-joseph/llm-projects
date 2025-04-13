@@ -3,73 +3,69 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Define the SQLite database URL
+# SQLite database configuration
 DATABASE_URL = "sqlite:///all_data.db"
-
-# Set up the database engine
 engine = create_engine(DATABASE_URL, echo=True)
-
-# Define a base class for our classes to inherit from
 Base = declarative_base()
 
-# Define the FileInfo model class
-class FileInfo(Base):
-    __tablename__ = "file_info"
+# FileInfo model representing the file_info table
+class Details(Base):
+    __tablename__ = "database"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False, unique=True)  # Enforcing uniqueness for name
-    csv_file_path = Column(String, nullable=False)
-    column_description = Column(String, nullable=True)
+    file_name = Column(String, nullable=False, unique=True)
+    file_path = Column(String, nullable=False)
 
     def __repr__(self):
-        return f"<FileInfo(name='{self.name}', csv_file_path='{self.csv_file_path}', column_description='{self.column_description}')>"
+        return f"<FileInfo(name='{self.file_name}', file_path='{self.file_path}')>"
 
-# Create the file_info table
+# Create database tables
 Base.metadata.create_all(engine)
 
-# Create a sessionmaker bound to the engine
+# Session factory for database operations
 Session = sessionmaker(bind=engine)
 
-# Function to insert data into the table
-def insert_file_info(name, csv_file_path, column_description=None):
+# Insert a new record into the file_info table
+def addFile(name, csv_file_path):
     session = Session()
     try:
-        # Check if a FileInfo with the given name already exists
-        existing_file = session.query(FileInfo).filter_by(name=name).first()
-        if existing_file:
-            return json.dumps({"success": False, "message": f"A dataset with the name '{name}' already exists."})
-
-        # Proceed with insertion if name does not exist
-        file_info = FileInfo(name=name, csv_file_path=csv_file_path, column_description=column_description)
-        session.add(file_info)
-        session.commit()
-        return json.dumps({"success": True, "message": f"Dataset '{name}' added successfully!"})
+        file = session.query(Details).filter_by(file_name=name).first()
+        print('Fetched DB')
+        if file:
+            return {"success": False, "message": f"A dataset with the name '{name}' already exists."}
+        else:
+            print('trying to save to DB')
+            file_info = Details(file_name=name, file_path=csv_file_path)
+            session.add(file_info)
+            session.commit()
+        return {"success": True, "message": f"Dataset '{name}' added successfully!"}
     except Exception as e:
-        return json.dumps({"success": False, "message": f"Error inserting file info: {e}"})
+        return {"success": False, "message": f"Error inserting file info: {e}"}
     finally:
         session.close()
 
-def update_column_description(name, column_description):
+# Retrieve all records from the file_info table
+def getHistorical()->list:
+    """
+        This function gets the list of all existing stored data
+    
+    """
     session = Session()
     try:
-        # Check if a FileInfo with the given name already exists
-        existing_file = session.query(FileInfo).filter_by(name=name).first()
-        if not existing_file:
-            return json.dumps({"success": False, "message": f"A dataset with the name '{name}' does not exist."})
-
-        # Proceed with insertion if name exist
-        existing_file.column_description = column_description
-        session.commit()
-        return json.dumps({"success": True, "message": f"Column description for '{name}' updated successfully!"})
+        files = session.query(Details).all()
+        return [(file.file_name, file.file_path) for file in files]
     except Exception as e:
-        return json.dumps({"success": False, "message": f"Error updating column description: {e}"})
+        print(e)
     finally:
         session.close()
-# Function to retrieve all file names and paths
-def get_all_file_info():
+
+
+def getDirectory(name):
     session = Session()
+    path = ''
     try:
-        files = session.query(FileInfo).all()
-        return [(file.name, file.csv_file_path, file.column_description) for file in files]
-    finally:
-        session.close()
+        file = session.query(Details).filter_by(file_name=name).first()
+        path = file.file_path 
+    except Exception as e :
+        print('file doesnt exist')
+    return path

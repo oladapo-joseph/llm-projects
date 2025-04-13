@@ -23,7 +23,17 @@ def generate_report(question: str, answer: str) -> str:
 
         I have a question like this: {question}.
         And the answer to the question is: {answer}.
-        Write a markdown report that answers the question and includes the answer.
+        Write a markdown response that answers the question and includes the answer.
+
+        Don'ts:
+        1. Dont show any code generated
+        2. Dont show data preparation
+
+        Do's:
+        1. Flesh the answer, ensure that it isnt just plain
+        2. Add suggestions or recommendation as they may apply
+        3. Add interpretation if neccessary
+        
     """
 
     prompt = PromptTemplate(

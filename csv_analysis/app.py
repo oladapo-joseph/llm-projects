@@ -3,15 +3,22 @@ import pandas as pd
 from graphGen import create_graph
 from agentx import AgentState 
 from response_gen import generate_report
+from db import getHistorical, addFile,getDirectory
+from filehandler import getFileDetails
 import gc 
-# filepath: c:/Users/HP/Desktop/nlp projects/csv_analysis/app.py
+import uuid
+
+
 
 # Initialize session state for the app
-if "id" not in st.session_state:
+if "id" not in st.session_state:    
+    st.session_state.id = uuid.uuid4()
     st.session_state.messages = []
     st.session_state.context = None
     st.session_state.summary = None
     st.session_state.output = None
+    st.session_state.existing =[]
+    st.session_state.file = None
 
 if 'agent_state' not in st.session_state:
         st.session_state.agent_state = AgentState(
@@ -29,6 +36,7 @@ if 'agent_state' not in st.session_state:
             max_retries=3,
         )
 
+session_id = st.session_state.id
 
 def reset_chat():
     st.session_state.messages = []
@@ -41,20 +49,41 @@ st.write("Upload a CSV file and ask questions about your data.")
 
 # File upload
 with st.sidebar:
-    uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+    try:
+        st.session_state.existing = getHistorical()
+    except Exception as e:
+        pass
+    
+    if st.session_state.existing:
+        st.session_state.file = st.selectbox("Pick from previously uploaded", options=[i[0] for i in st.session_state.existing],
+                            placeholder='Choose an option', index=None)
 
-    if uploaded_file:
-        # Load the CSV file into a DataFrame
-        with st.spinner('Processing File...'):
-            print("Current state:", st.session_state.agent_state['next_state'])
-            st.session_state.agent_state["df"] = pd.read_csv(uploaded_file)
-            st.session_state.agent_state["df"] = st.session_state.agent_state["df"].dropna(axis=1, how="all")
-            st.session_state.agent_state["df_head"] = str(st.session_state.agent_state["df"].sample(30).to_markdown())
-            st.session_state.agent_state["df_columns"] = st.session_state.agent_state["df"].columns.tolist()
-            # st.session_state.agent_state["next_state"] = "get_question"
-
-        st.write("File uploaded successfully! Here's a preview of your data:")
-        st.dataframe(st.session_state.agent_state["df"].head(), use_container_width=True)
+    with st.form('saveFile', clear_on_submit=True):
+        uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+        file_name = st.text_input('What will you like to call your data')
+        submit = st.form_submit_button('Add dataset')
+        if submit:
+            if uploaded_file and file_name:
+                # Load the CSV file into a DataFrame
+                with st.spinner('Processing File...'):
+                    print("Current state:", st.session_state.agent_state['next_state'])
+                    st.session_state.agent_state['df'] = pd.read_csv(uploaded_file, low_memory=False)
+                    st.session_state.agent_state = getFileDetails(st.session_state.agent_state)
+                    filepath = file_name.replace(' ', '_')
+                
+                    response = addFile(file_name, f'data/{filepath}.csv')
+                    if response['success']:    
+                        st.session_state.agent_state["df"].to_csv(f'data/{filepath}.csv')
+                        st.write("File uploaded successfully! Here's a preview of your data:")
+                        st.dataframe(st.session_state.agent_state["df"].head(), use_container_width=True)
+                        
+                    else:
+                        st.error(response['message'])
+            else:
+                if uploaded_file:
+                    st.error('Please add a name for your data')
+                else:
+                    st.error('Kindly upload a file')
 
 # Question input
 def get_question(prompt):
@@ -89,9 +118,13 @@ for message in st.session_state.messages:
 # Accept user input
 if prompt := st.chat_input("What's do you want to know?"):
     
-    if st.session_state.agent_state['df'] is None:
-        st.error("Please upload a file first.")
+    if st.session_state.agent_state['df'] is None and st.session_state.file is None:
+        st.error("Please upload a file first or select a file")
         st.stop()
+    if st.session_state.file:
+        uploaded_file = getDirectory(st.session_state.file)
+        st.session_state.agent_state["df"] =pd.read_csv(uploaded_file, low_memory=False)
+        st.session_state.agent_state = getFileDetails(st.session_state.agent_state)
     get_question(prompt)
     print("Current state:", st.session_state.agent_state['next_state'])
     # Add user message to chat history
