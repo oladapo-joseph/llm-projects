@@ -33,13 +33,20 @@ Welcome to the **CSV Analysis Studio**, a Python-based project designed to analy
     - **Execution**: Executes the validated code and retrieves the result.
     - **Regeneration**: Debugs and regenerates code in case of errors.
 
-### 5. **State Graph Workflow (`graphGen.py`)**
+### 5. **Response Generation (`response_gen.py`)**
+    - This generates a report using the question and the answer calculated so that it isnt just a basic response.
+
+
+### 6. **State Graph Workflow (`graphGen.py`)**
     - Defines the workflow using `StateGraph` from the `langgraph` library.
     - Manages transitions between states such as file loading, question handling, code generation, validation, execution, and result display.
 
 ### 6. **Configuration (`langgraph.json`)**
     - Specifies the environment, dependencies, and graph configurations for the project.
 
+### 7. **Database management(`db.py`)**
+    - Stores the details of the data in a local db to allow faster retrieval of the data
+    -   
 ---
 
 ## Setup Instructions
@@ -73,31 +80,26 @@ pip install -r requirements.txt
     langgraph dev     # this opens the langgraph UI for workflow visualization and simulation
 ```
 
-### 6. **Visualize the Workflow (Optional)**
-    - Install `graphviz` to generate a visual representation of the workflow:
-    
-```bash
-    pip install graphviz 
-    
-    # Run the visualization command:
-    python studio/graphGen.py
-
-```
 
 ---
 
 ## Example Usage
 
-1. Place your CSV file in the `data` directory.
-2. Modify the `getQuestion` function in `query_handler.py` to specify your question.
-3. Run the workflow to generate and execute Python code that answers your question.
+1. In your working directory
+```
+    streamlit run app.py
+```
+
+![Home Screen](images/home.png)
+
+2. Upload the file
+3. Ask your questions
+
+An example below 
+![Sample](images/sample.png)
 
 ---
-## To-do
-1. Make input dynamic and conversational
-2. Optimize with vectorstore preferably Qdrant
-3. Deploy as an app using streamlit
-4. 
+. 
 
 
 ---
