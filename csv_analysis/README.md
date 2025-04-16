@@ -49,7 +49,7 @@ Welcome to the **CSV Analysis Studio**, a Python-based project designed to analy
     -   
 ---
 
-## Setup Instructions
+## Setup Instructions to see the workflow 
 
 Follow these steps to set up and run the project:
 

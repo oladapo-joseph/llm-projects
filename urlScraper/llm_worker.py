@@ -21,7 +21,7 @@ def getResponse(query: str, db: FAISS, k=4) -> str:
     You are a helpful assistant with great writing skills and also a graduate.
 
 
-    Answer the question: {question}
+    Answer the question: {input}
 
     You can take context information from below:
     ----------------
