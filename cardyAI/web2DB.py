@@ -1,7 +1,6 @@
-from common import FAISS, embeddings, check_FAISS, getChunks,get_Metadata
-from langchain_community.document_loaders import UnstructuredURLLoader, PlaywrightURLLoader
+from langchain_community.document_loaders import UnstructuredURLLoader
 from typing import List
-from playwright.sync_api import sync_playwright
+
 
 
 
@@ -27,22 +26,10 @@ def url_loader(urls:List[str])->List:
 
     """
     try:
-        loader = UnstructuredURLLoader(urls=urls, verify_ssl=False)
+        loader = UnstructuredURLLoader(urls=[str(url) for url in urls], verify_ssl=False)
         docs = loader.load()
-        
-        if not docs or docs[0].page_content.strip() == '':
-            print("Trying PlaywrightURLLoader...")
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
-                loader = PlaywrightURLLoader(
-                                urls=urls,
-                                remove_selectors=["header", "footer", "nav"],
-                                continue_on_failure=True,
-                                headless=True
-                            )
-                docs = loader.load()
-                print(docs)
-                browser.close()
+        print(docs)
+        print(urls)
         
         if not docs:
             raise ValueError("No content loaded from URLs")

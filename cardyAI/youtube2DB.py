@@ -1,5 +1,5 @@
 from youtube_transcript_api import YouTubeTranscriptApi
-from main import (FAISS, 
+from central_import import (FAISS, 
                     embeddings, ChatGoogleGenerativeAI, 
                     RecursiveCharacterTextSplitter)
 from common import check_FAISS, get_Metadata, getChunks
@@ -57,29 +57,6 @@ def youtube_chunks(full_transcript):
 
     return  docs
 
-
-def getSummary(docs):
-    if type(docs) == list:
-        newdocs=  " ".join(i for i in docs)
-    else:
-        newdocs =docs 
-
-    llm = ChatGoogleGenerativeAI(temperature=0.4, streaming=True)
-
-    prompt = PromptTemplate(
-        input_variables=['file'],
-        template= '''
-            You are a good writer.
-
-            Summarize this video transcript: {file}
-            Do this in less than 100 words.
-'''
-    )
-    chain = prompt | llm | StrOutputParser()
-
-    response = chain.invoke({'file':newdocs})
-
-    return response
 
 
 def save_youtube(datatype: str, data_: list[str] = None) -> FAISS:

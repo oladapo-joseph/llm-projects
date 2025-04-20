@@ -1,4 +1,5 @@
-from main import embeddings, FAISS, RecursiveCharacterTextSplitter,List
+from central_import import embeddings, FAISS, RecursiveCharacterTextSplitter,List, PromptTemplate, ChatGoogleGenerativeAI
+from langchain_core.output_parsers import StrOutputParser
 
 
 
@@ -22,6 +23,36 @@ def get_Metadata(db: FAISS) -> list:
         print(f"Error extracting metadata: {e}")
         return []
 
+
+def getSummary(docs)->str:
+    """
+    Summarizes the provided text or list of texts into a concise format.
+    Args:
+        docs (str or list): The input text or a list of text strings to be summarized.
+    Returns:
+        str: A summary of the input text(s) in less than 100 words.
+    """
+
+
+    if type(docs) == list:
+        newdocs=  " ".join(i for i in docs)
+    else:
+        newdocs =docs 
+
+    llm = ChatGoogleGenerativeAI(temperature=0.4, streaming=True)
+
+    prompt = PromptTemplate(
+        input_variables=['file'],
+        template= '''
+            You are a good writer.
+
+            Summarize this transcript: {file}
+            Do this in less than 100 words.
+'''
+    )
+    chain = prompt | llm | StrOutputParser()
+    response = chain.invoke({'file':newdocs})
+    return response
 
 
 def getChunks(docs:List[str]) -> List:
@@ -75,7 +106,7 @@ def save_to_vectorDB(datatype: str, loader, data_source: list[str] | str = None)
     Takes a list of sources (URLs or PDFs) and returns a FAISS vector database.
     
     Args:
-        datatype: Type of source ('url' or 'pdf' or 'text').
+        datatype: Type of source ('url' or document {'pdf' or 'text'}).
         loader: Function to load documents from the source.
         data_source: List or single source (URLs or PDFs) to process.
         
@@ -84,23 +115,29 @@ def save_to_vectorDB(datatype: str, loader, data_source: list[str] | str = None)
     """
     try:
         # Ensure data_source is a list
-        if isinstance(data_source, str):
-            data_source = [data_source]
+        if len(data_source)<2:
+            data_ = source = data_source
+        else:
+            data_,  source = data_source
+        if isinstance(source, str):
+            source = [source]
 
         db = check_FAISS()
         if db:
             old_sources = get_Metadata(db)
-            new_sources = [src for src in data_source if src not in old_sources]
+            new_sources = [src for src in source if src not in old_sources]
 
             if not new_sources:
                 print(f"No new {datatype}s to process. Using existing data...")
                 return db
 
             print(f"Found {len(new_sources)} new {datatype}s to process...")
-            docs = loader(new_sources)
+            print(new_sources[:5])
+            docs = loader(data_)
 
             if not docs:
-                raise ValueError(f"No {datatype}s loaded.")
+                print(f"No {datatype}s loaded.")
+                return None
 
             split_docs = getChunks(docs)
             if not split_docs:
@@ -109,13 +146,15 @@ def save_to_vectorDB(datatype: str, loader, data_source: list[str] | str = None)
             print(f"Adding {len(split_docs)} new documents to the index...")
             db.add_documents(split_docs)
             db.save_local('faiss_index')
+            print('done adding documents')
             return db
         else:
             print(f"Creating new FAISS index with {len(data_source)} {datatype}s...")
             docs = loader(data_source)
 
             if not docs:
-                raise ValueError(f"No {datatype}s loaded.")
+                print(f"No {datatype}s loaded.")
+                return None
 
             split_docs = getChunks(docs)
             if not split_docs:
@@ -123,6 +162,7 @@ def save_to_vectorDB(datatype: str, loader, data_source: list[str] | str = None)
 
             db = FAISS.from_documents(documents=split_docs, embedding=embeddings)
             db.save_local('faiss_index')
+            print('done adding')
             return db
 
     except ValueError as e:
