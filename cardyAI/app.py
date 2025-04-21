@@ -9,8 +9,8 @@ import gc
 
 
 
-st.title('Cardy AI')
-st.subheader("Your :blue[Cool AI] :sunglasses:")
+st.title(':blue[Cardy AI] 🧙‍♀️ ', anchor='https://google.com')
+
 
 if "id" not in st.session_state:
     st.session_state.id = uuid4()
@@ -135,7 +135,7 @@ def display_url():
 
 with st.sidebar:
 
-    source = st.selectbox('Select Data Source', options = data_sources, 
+    source = st.selectbox('Add to Database', options = data_sources, 
                           placeholder='Choose a data Source', index=None )
 
     if source:
@@ -163,7 +163,7 @@ with col1:
     st.subheader("Chat with the AI")
 
 with col2:
-    st.button("Clear 🗑️", on_click=reset_chat)
+    st.button("Clear 🗑️", help='Click to clear history', on_click=reset_chat)
 
 # Initialize chat history
 if "messages" not in st.session_state:

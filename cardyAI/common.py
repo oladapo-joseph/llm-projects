@@ -94,7 +94,7 @@ def check_FAISS()->bool:
     This function checks if the FAISS database is empty or not.
     """
     try:
-        print('loaded')
+        # print('loaded')
         return load_local()
     except Exception as e:
         print(f"Error loading FAISS index: {e}")
