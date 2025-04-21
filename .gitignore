@@ -23,3 +23,4 @@ csv_data_analysis/*
 csv_data_analysis/.env
 csv_data_analysis/data/
 *faiss_index
+cardyAI/llm_worker_copy.py
